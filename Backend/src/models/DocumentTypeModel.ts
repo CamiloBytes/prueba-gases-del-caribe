@@ -3,7 +3,7 @@ import { DataTypes, ModelDefined } from 'sequelize'
 import { DocumentType } from '../interface/IUser'
 import { sequelize } from '../database/config.database'
 
-export const DocumentTypeModel:ModelDefined<DocumentType, Omit<DocumentType, "id">> = sequelize.define("document_types", {
+export const DocumentTypeModel:ModelDefined<DocumentType, Omit<DocumentType, "id">> = sequelize.define("document_type", {
     id_type: {
         type: DataTypes.INTEGER,
         primaryKey: true,

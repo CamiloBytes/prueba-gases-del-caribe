@@ -1,9 +1,27 @@
-export type User = {
-    first_name : string,
-    lastnamae:string,
-    email:string,
-    password:string,
-} 
+export interface User  {
+     first_name: string,
+    last_name: string,
+    email: string,
+    phone: string,
+}
+
+export interface Iuser {
+
+    id?: number
+    first_name: string,
+    last_name: string,
+    email: string,
+    password: string,
+    birth_date: Date,
+    phone: string,
+    address?: string,
+    document_type?: {
+        id?: number,
+        name: string,
+        abbreviation: string,
+    }
+}
+
 
 export interface ProtectedRouteProps {
     children: React.ReactNode;

@@ -1,7 +1,17 @@
 import express from 'express';
-import { json } from 'stream/consumers';
+import userRoutes from './src/routes/user.routes'
+import { connectDB, sequelize } from './src/database/config.database';
 
 const app = express()
 
 app.use(express.json())
-app.use()
+app.use("api/users", userRoutes)
+
+connectDB()
+
+sequelize.sync({alter: true}).then(()=>{
+    console.log("Modelos cargados");
+    
+})
+
+export default app

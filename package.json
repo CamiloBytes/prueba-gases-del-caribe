@@ -7,14 +7,17 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:backend": "tsx Backend/server.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/material": "^7.3.5",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "pg": "^8.16.3",
@@ -25,10 +28,14 @@
     "react-router-dom": "^7.9.5",
     "sequelize": "^6.37.7",
     "tailwindcss": "^4.1.17",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "yup": "^1.7.1",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",

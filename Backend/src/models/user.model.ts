@@ -37,8 +37,8 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
     document_types_id :{
         type:DataTypes.INTEGER,
         references:{
-            model:"document_type",
-            key:"id"
+            model:"document_types",
+            key:"id_type"
         },
         allowNull:false
     },
@@ -58,14 +58,12 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
 },
     {
         tableName: "Users",
-        timestamps: true
-    },
-    
-)
+        timestamps: false
+    })
 
 UserModel.belongsTo(DocumentTypeModel, {
     foreignKey:"document_types_id ",
-    as: "document_type"
+    as: "document_types"
 });
 
 DocumentTypeModel.hasMany(UserModel,{
