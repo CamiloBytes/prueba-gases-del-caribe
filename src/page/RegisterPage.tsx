@@ -10,67 +10,96 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  Grid,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, PersonAdd, Grid3x3 } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuthStore } from '../store/authstore';
 import axios from 'axios';
 
-// Esquema de validación
-const loginSchema = yup.object({
+const registerSchema = yup.object({
+  first_name: yup
+    .string()
+    .required('El nombre es obligatorio')
+    .min(2, 'Debe tener al menos 2 caracteres'),
+  last_name: yup
+    .string()
+    .required('El apellido es obligatorio')
+    .min(2, 'Debe tener al menos 2 caracteres'),
   email: yup
     .string()
     .required('El correo es obligatorio')
     .email('Debe ser un correo válido'),
+  phone: yup
+    .string()
+    .required('El teléfono es obligatorio')
+    .matches(/^[0-9]{10}$/, 'Debe tener 10 dígitos'),
   password: yup
     .string()
     .required('La contraseña es obligatoria')
     .min(6, 'Debe tener al menos 6 caracteres'),
+  confirmPassword: yup
+    .string()
+    .required('Confirma tu contraseña')
+    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
 });
 
-interface LoginForm {
+interface RegisterForm {
+  first_name: string;
+  last_name: string;
   email: string;
+  phone: string;
   password: string;
+  confirmPassword: string;
 }
 
-export const LoginPage = () => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginForm>({
-    resolver: yupResolver(loginSchema),
+  } = useForm<RegisterForm>({
+    resolver: yupResolver(registerSchema),
     defaultValues: {
+      first_name: '',
+      last_name: '',
       email: '',
+      phone: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: RegisterForm) => {
     try {
       setError(null);
       
-
-      const response = await axios.post('http://localhost:4000/api/auth/login', {
+      const response = await axios.post('http://localhost:4000/api/users/', {
+        first_name: data.first_name,
+        last_name: data.last_name,
         email: data.email,
+        phone: data.phone,
         password: data.password,
       });
 
-
+      setSuccess(true);
       login(response.data.user);
-      
 
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
     } catch (err: any) {
       setError(
-        err.response?.data?.message || 'Error al iniciar sesión. Verifica tus credenciales.'
+        err.response?.data?.message || 'Error al registrar. Por favor intenta de nuevo.'
       );
     }
   };
@@ -90,33 +119,59 @@ export const LoginPage = () => {
         elevation={3}
         sx={{
           p: 4,
-          maxWidth: 450,
+          maxWidth: 600,
           width: '100%',
           borderRadius: 3,
         }}
       >
         <Stack spacing={3}>
-          {/* Encabezado */}
           <Box sx={{ textAlign: 'center' }}>
-            <LoginIcon sx={{ fontSize: 48, color: '#1976d2', mb: 1 }} />
+            
             <Typography variant="h4" fontWeight="bold" color="#1976d2">
-              Iniciar Sesión
+              Crear Cuenta
             </Typography>
             <Typography variant="body2" color="text.secondary" mt={1}>
-              Ingresa tus credenciales para continuar
+              Completa el formulario para registrarte
             </Typography>
           </Box>
 
-          {/* Mensaje de error */}
           {error && (
             <Alert severity="error" onClose={() => setError(null)}>
               {error}
             </Alert>
           )}
 
-          {/* Formulario */}
+          {success && (
+            <Alert severity="success">
+              ¡Registro exitoso! Redirigiendo al dashboard...
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Nombre"
+                    fullWidth
+                    {...register('first_name')}
+                    error={!!errors.first_name}
+                    helperText={errors.first_name?.message}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Apellido"
+                    fullWidth
+                    {...register('last_name')}
+                    error={!!errors.last_name}
+                    helperText={errors.last_name?.message}
+                    variant="outlined"
+                  />
+                </Grid>
+              </Grid>
+
               <TextField
                 label="Correo electrónico"
                 type="email"
@@ -125,6 +180,16 @@ export const LoginPage = () => {
                 error={!!errors.email}
                 helperText={errors.email?.message}
                 variant="outlined"
+              />
+
+              <TextField
+                label="Teléfono"
+                fullWidth
+                {...register('phone')}
+                error={!!errors.phone}
+                helperText={errors.phone?.message}
+                variant="outlined"
+                placeholder="1234567890"
               />
 
               <TextField
@@ -149,12 +214,34 @@ export const LoginPage = () => {
                 }}
               />
 
+              <TextField
+                label="Confirmar contraseña"
+                type={showConfirmPassword ? 'text' : 'password'}
+                fullWidth
+                {...register('confirmPassword')}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
                 fullWidth
-                disabled={isSubmitting}
+                disabled={isSubmitting || success}
                 sx={{
                   backgroundColor: '#1976d2',
                   py: 1.5,
@@ -164,18 +251,18 @@ export const LoginPage = () => {
                   },
                 }}
               >
-                {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+                {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
               </Button>
 
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
-                  ¿No tienes cuenta?{' '}
+                  ¿Ya tienes cuenta?{' '}
                   <Button
                     variant="text"
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate('/login')}
                     sx={{ textTransform: 'none', fontWeight: 'bold' }}
                   >
-                    Regístrate aquí
+                    Inicia sesión aquí
                   </Button>
                 </Typography>
               </Box>

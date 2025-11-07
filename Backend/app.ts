@@ -1,11 +1,14 @@
 import express from 'express';
 import userRoutes from './src/routes/user.routes'
 import { connectDB, sequelize } from './src/database/config.database';
+import cors from 'cors'
+
 
 const app = express()
+app.use(cors())
 
 app.use(express.json())
-app.use("api/users", userRoutes)
+app.use("/api/users", userRoutes)
 
 connectDB()
 

@@ -44,3 +44,10 @@ export interface AuthState {
     isAuthenticated: boolean;
     isLoading: boolean;
 }
+
+export interface UserFormData {
+    nombre: string;
+    username: string;
+    password: string;
+    correo: string;
+}

@@ -8,7 +8,7 @@ const PrivateRouter = ({ children, }: ProtectedRouteProps) => {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/" replace />;
     }
     
 

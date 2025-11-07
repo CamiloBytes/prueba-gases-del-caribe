@@ -28,11 +28,11 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
     },
     birth_date:{
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: true
     },
     ducument_number:{
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     document_types_id :{
         type:DataTypes.INTEGER,
@@ -40,7 +40,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
             model:"document_types",
             key:"id_type"
         },
-        allowNull:false
+        allowNull: true
     },
     phone:{
         type: DataTypes.STRING,
@@ -48,7 +48,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
     },
     address:{
         type:DataTypes.STRING,
-        allowNull:false
+        allowNull: true
     },
     create_at:{
         type:DataTypes.DATE,
