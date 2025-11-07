@@ -10,11 +10,11 @@ app.use(cors())
 app.use(express.json())
 app.use("/api/users", userRoutes)
 
-connectDB()
+// connectDB()
 
-sequelize.sync({alter: true}).then(()=>{
-    console.log("Modelos cargados");
-    
-})
+// sequelize.sync({alter: true}).then(()=>{
+//     console.log("Modelos cargados");
+
+// })
 
 export default app

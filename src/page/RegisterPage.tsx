@@ -95,7 +95,7 @@ export const RegisterPage = () => {
       login(response.data.user);
 
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/profile');
       }, 2000);
     } catch (err: any) {
       setError(

@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthStore>()(
                     set({ isLoading: true });
                     const loginResponse = await axios.post("/login", {
                         username: userData.first_name ,
-                        password: userData.password,
+                        password: userData.phone,
                     });
                     const user = loginResponse.data.user;
                     set({

@@ -13,7 +13,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
         type: DataTypes.STRING,
         allowNull: false
     },
-    last_namae:{
+    last_name:{
         type:DataTypes.STRING,
         allowNull:false
     },
@@ -30,7 +30,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
         type: DataTypes.DATE,
         allowNull: true
     },
-    ducument_number:{
+    document_number:{
         type: DataTypes.STRING,
         allowNull: true
     },
@@ -62,11 +62,11 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
     })
 
 UserModel.belongsTo(DocumentTypeModel, {
-    foreignKey:"document_types_id ",
+    foreignKey:"document_types_id",
     as: "document_types"
 });
 
 DocumentTypeModel.hasMany(UserModel,{
-    foreignKey:"document_types_id ",
+    foreignKey:"document_types_id",
     as:"users"
 })
