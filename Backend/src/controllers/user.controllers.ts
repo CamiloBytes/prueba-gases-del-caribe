@@ -70,14 +70,14 @@ export const loginUser = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.get('password') as string);
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Contraseña incorrecta" });
         }
 
-        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.get('id') as number, email: user.get('email') as string }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
 
-        res.json({ message: "Login exitoso", user: { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email }, token });
+        res.json({ message: "Login exitoso", user: { id: user.get('id') as number, first_name: user.get('first_name') as string, last_name: user.get('last_name') as string, email: user.get('email') as string }, token });
     } catch (error: any) {
         res.status(500).json({ message: "Error al iniciar sesión", error: error.message });
     }
