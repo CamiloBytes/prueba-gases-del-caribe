@@ -2,6 +2,7 @@ import { DataTypes, ModelDefined } from 'sequelize'
 import { sequelize } from '../database/config.database'
 import { IUser } from '../interface/IUser'
 import { DocumentTypeModel } from './DocumentTypeModel'
+import bcrypt from 'bcrypt'
 
 export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.define("user", {
     id: {
@@ -13,7 +14,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
         type: DataTypes.STRING,
         allowNull: false
     },
-    last_namae:{
+    last_name:{
         type:DataTypes.STRING,
         allowNull:false
     },
@@ -30,7 +31,7 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
         type: DataTypes.DATE,
         allowNull: true
     },
-    ducument_number:{
+    document_number:{
         type: DataTypes.STRING,
         allowNull: true
     },
@@ -40,7 +41,8 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
             model:"document_types",
             key:"id_type"
         },
-        allowNull: true
+        allowNull: true,
+        defaultValue: null
     },
     phone:{
         type: DataTypes.STRING,
@@ -62,11 +64,27 @@ export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.defin
     })
 
 UserModel.belongsTo(DocumentTypeModel, {
-    foreignKey:"document_types_id ",
+    foreignKey:"document_types_id",
     as: "document_types"
 });
 
 DocumentTypeModel.hasMany(UserModel,{
-    foreignKey:"document_types_id ",
+    foreignKey:"document_types_id",
     as:"users"
 })
+
+// Hook para hash de contraseña antes de crear
+UserModel.beforeCreate(async (user) => {
+    if (user.password) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+    }
+});
+
+// Hook para hash de contraseña antes de actualizar
+UserModel.beforeUpdate(async (user) => {
+    if (user.changed('password') && user.password) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+    }
+});

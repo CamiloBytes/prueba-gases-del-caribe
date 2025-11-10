@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# Prueba Gases del Caribe
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web full-stack para gestión de usuarios con autenticación.
 
-Currently, two official plugins are available:
+## Estructura del Proyecto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+prueba-gases-del-caribe/
+├── Backend/                    # API Backend (Node.js + Express + Sequelize)
+│   ├── src/
+│   │   ├── controllers/        # Controladores de la API
+│   │   ├── database/          # Configuración de base de datos
+│   │   ├── interface/         # Interfaces TypeScript
+│   │   ├── models/            # Modelos de Sequelize
+│   │   └── routes/            # Rutas de la API
+│   ├── app.ts                 # Configuración principal de Express
+│   ├── server.ts              # Punto de entrada del servidor
+│   └── package.json
+├── src/                       # Frontend (React + TypeScript + Vite)
+│   ├── components/            # Componentes reutilizables
+│   │   └── ui/                # Componentes de UI
+│   ├── guard/                 # Guards de autenticación
+│   ├── hooks/                 # Hooks personalizados
+│   ├── page/                  # Páginas de la aplicación
+│   ├── routes/                # Configuración de rutas
+│   ├── store/                 # Estado global (Zustand)
+│   ├── types/                 # Tipos TypeScript
+│   └── validations/           # Esquemas de validación
+├── public/                    # Archivos estáticos
+├── .gitignore                 # Archivos ignorados por Git
+├── eslint.config.js           # Configuración de ESLint
+├── index.html                 # Archivo HTML principal
+├── package.json               # Dependencias del frontend
+├── package-lock.json          # Lockfile de npm
+├── tsconfig.app.json          # Configuración TypeScript para app
+├── tsconfig.json              # Configuración TypeScript principal
+├── tsconfig.node.json         # Configuración TypeScript para node
+├── vite.config.ts             # Configuración de Vite
+└── TODO.md                    # Lista de tareas pendientes
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Cómo Ejecutar
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Requisitos Previos
+- Node.js (versión 16 o superior)
+- npm o yarn
+- PostgreSQL (opcional, actualmente usa datos mockeados)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Instalación y Ejecución
+
+1. **Instalar dependencias**
+   ```bash
+   npm install
+   ```
+
+2. 
+
+3. **Ejecutar el backend:**
+   ```bash
+    npm run start:backend
+   ```
+   El servidor backend estará disponible en `http://localhost:4000`
+
+4. **Ejecutar el frontend (en una terminal separada):**
+   ```bash
+   npm run dev
+   ```
+   La aplicación frontend estará disponible en `http://localhost:5173` (o el puerto que indique Vite)
+
+### Endpoints de la API
+
+- `POST /api/users` - Crear usuario (registro)
+- `GET /api/users` - Obtener todos los usuarios
+- `GET /api/users/:id` - Obtener usuario por ID
+- `PUT /api/users/:id` - Actualizar usuario
+- `DELETE /api/users/:id` - Eliminar usuario
+
+### Funcionalidades
+
+- Registro de usuarios con validación
+- Inicio de sesión
+- Dashboard protegido
+- Gestión de usuarios (CRUD)
+- Autenticación con JWT (en desarrollo)
+- Interfaz responsiva con Material-UI
+
+### Notas
+
+- Actualmente el backend usa datos mockeados para evitar dependencias de base de datos
+- La autenticación completa está en desarrollo
+- Para producción, configurar variables de entorno para la base de datos

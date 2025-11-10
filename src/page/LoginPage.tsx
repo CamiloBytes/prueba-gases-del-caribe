@@ -58,16 +58,16 @@ export const LoginPage = () => {
       setError(null);
       
 
-      const response = await axios.post('http://localhost:4000/api/auth/login', {
+      const response = await axios.post('http://localhost:4000/api/users/login', {
         email: data.email,
         password: data.password,
       });
 
 
       login(response.data.user);
-      
 
-      navigate('/dashboard');
+
+      navigate('/profile');
     } catch (err: any) {
       setError(
         err.response?.data?.message || 'Error al iniciar sesión. Verifica tus credenciales.'
