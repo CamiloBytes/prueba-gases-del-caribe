@@ -18,6 +18,7 @@ prueba-gases-del-caribe/
 │   └── package.json
 ├── src/                       # Frontend (React + TypeScript + Vite)
 │   ├── components/            # Componentes reutilizables
+│   │   └── ui/                # Componentes de UI
 │   ├── guard/                 # Guards de autenticación
 │   ├── hooks/                 # Hooks personalizados
 │   ├── page/                  # Páginas de la aplicación
@@ -26,7 +27,16 @@ prueba-gases-del-caribe/
 │   ├── types/                 # Tipos TypeScript
 │   └── validations/           # Esquemas de validación
 ├── public/                    # Archivos estáticos
-└── package.json               # Dependencias del frontend
+├── .gitignore                 # Archivos ignorados por Git
+├── eslint.config.js           # Configuración de ESLint
+├── index.html                 # Archivo HTML principal
+├── package.json               # Dependencias del frontend
+├── package-lock.json          # Lockfile de npm
+├── tsconfig.app.json          # Configuración TypeScript para app
+├── tsconfig.json              # Configuración TypeScript principal
+├── tsconfig.node.json         # Configuración TypeScript para node
+├── vite.config.ts             # Configuración de Vite
+└── TODO.md                    # Lista de tareas pendientes
 ```
 
 ## Cómo Ejecutar
@@ -38,22 +48,16 @@ prueba-gases-del-caribe/
 
 ### Instalación y Ejecución
 
-1. **Instalar dependencias del frontend:**
+1. **Instalar dependencias**
    ```bash
    npm install
    ```
 
-2. **Instalar dependencias del backend:**
-   ```bash
-   cd Backend
-   npm install
-   cd ..
-   ```
+2. 
 
 3. **Ejecutar el backend:**
    ```bash
-   cd Backend
-   npx tsx server.ts
+    npm run start:backend
    ```
    El servidor backend estará disponible en `http://localhost:4000`
 

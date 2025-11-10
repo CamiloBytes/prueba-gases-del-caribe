@@ -22,16 +22,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import type { Iuser, User } from "../types/user.type";
 import { useAuthStore } from "../store/authstore";
 import { useNavigate } from "react-router-dom";
-import { ConfirmeDialog } from "../components/ConfirmeDialog";
+
 
 export const Dashboard = () => {
   const { users, loading, error, addUser, update, deleted } = useUsers();
   const { logout, user } = useAuthStore();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const [openConfirm, setOpenConfirm] = useState(false);
+
   const [editingUser, setEditingUser] = useState<Iuser | null>(null);
-  const [userToDelete, setUserToDelete] = useState<number | null>(null);
 
   const handleOpenDialog = (user?: Iuser) => {
     if (user) {
@@ -56,22 +55,9 @@ export const Dashboard = () => {
     handleCloseDialog();
   };
 
-  const handleOpenConfirm = (id: number) => {
-    setUserToDelete(id);
-    setOpenConfirm(true);
-  };
 
-  const handleCloseConfirm = () => {
-    setOpenConfirm(false);
-    setUserToDelete(null);
-  };
 
-  const handleConfirmDelete = async () => {
-    if (userToDelete) {
-      await deleted(userToDelete);
-      handleCloseConfirm();
-    }
-  };
+
 
   const handleLogout = () => {
     logout();
@@ -205,7 +191,7 @@ export const Dashboard = () => {
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => user.id && handleOpenConfirm(user.id)}
+                        onClick={() => user.id && window.confirm('¿Estás seguro de eliminar este usuario?') && deleted(user.id)}
                         sx={{
                           color: "#9ca3af",
                           "&:hover": { color: "#ef4444", backgroundColor: "#4b5563" },

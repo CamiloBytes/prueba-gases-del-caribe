@@ -27,11 +27,8 @@ export const useAuthStore = create<AuthStore>()(
             register: async (userData: User) => {
                 try {
                     set({ isLoading: true });
-                    const loginResponse = await axios.post("/login", {
-                        username: userData.first_name ,
-                        password: userData.phone,
-                    });
-                    const user = loginResponse.data.user;
+                    const registerResponse = await axios.post("/api/users", userData);
+                    const user = registerResponse.data.user;
                     set({
                         user,
                         isAuthenticated: true,

@@ -3,6 +3,11 @@ export interface User  {
     last_name: string,
     email: string,
     phone: string,
+    password?: string,
+    birth_date?: string,
+    document_number?: string,
+    document_types_id?: number,
+    address?: string,
 }
 
 export interface Iuser {
@@ -12,9 +17,10 @@ export interface Iuser {
     last_name: string,
     email: string,
     password: string,
-    birth_date: Date,
+    birth_date?: Date,
     phone: string,
     address?: string,
+    document_number?: string,
     document_type?: {
         id?: number,
         name: string,

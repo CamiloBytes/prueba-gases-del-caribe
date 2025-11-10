@@ -10,9 +10,9 @@ import {
   Alert,
   InputAdornment,
   IconButton,
-  Grid,
 } from '@mui/material';
-import { Visibility, VisibilityOff, PersonAdd, Grid3x3 } from '@mui/icons-material';
+import Grid from '@mui/material/Grid';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -259,7 +259,7 @@ export const RegisterPage = () => {
                   ¿Ya tienes cuenta?{' '}
                   <Button
                     variant="text"
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/')}
                     sx={{ textTransform: 'none', fontWeight: 'bold' }}
                   >
                     Inicia sesión aquí
