@@ -1,5 +1,6 @@
 import express from "express";
 import { UserModel } from "../models/user.model.ts";
+import { DocumentTypeModel } from "../models/DocumentTypeModel.ts";
 import bcrypt from 'bcrypt';
 
 export const createUser = async (req: express.Request, res: express.Response) => {
@@ -49,7 +50,14 @@ export const updateuser = async (req: express.Request, res: express.Response) =>
                 return res.status(404).json({ message: "Usuario no encontrado" });
             }
 
-            if (updateData.current_password !== user.get('password')) {
+            const storedPassword = user.get('password') as string;
+            console.log('Contraseña actual proporcionada:', updateData.current_password);
+            console.log('Contraseña almacenada (hash):', storedPassword);
+
+            const isCurrentPasswordValid = await bcrypt.compare(updateData.current_password, storedPassword);
+            console.log('¿Contraseña válida?', isCurrentPasswordValid);
+
+            if (!isCurrentPasswordValid) {
                 return res.status(401).json({ message: "Contraseña actual incorrecta" });
             }
 
@@ -67,7 +75,6 @@ export const updateuser = async (req: express.Request, res: express.Response) =>
 
         const [updated] = await UserModel.update(updateData, { where: { id } });
         if (updated) {
-            const { DocumentTypeModel } = await import('../models/DocumentTypeModel');
             const updatedUser = await UserModel.findByPk(id, {
                 include: [{
                     model: DocumentTypeModel,
