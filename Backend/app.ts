@@ -1,7 +1,7 @@
 import express from 'express';
-import userRoutes from './src/routes/user.routes'
-import documentTypeRoutes from './src/routes/documentType.routes'
-import { connectDB, sequelize } from './src/database/config.database';
+import userRoutes from './src/routes/user.routes.ts'
+import documentTypeRoutes from './src/routes/documentType.routes.ts'
+import { connectDB, sequelize } from './src/database/config.database.ts';
 import cors from 'cors'
 
 

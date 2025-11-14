@@ -1,5 +1,6 @@
 export interface User  {
-     first_name: string,
+    id?: number,
+    first_name: string,
     last_name: string,
     email: string,
     phone: string,
@@ -47,6 +48,7 @@ export interface AuthStore extends AuthState {
 
 export interface AuthState {
     user: User | null;
+    token: string | null;
     isAuthenticated: boolean;
     isLoading: boolean;
 }

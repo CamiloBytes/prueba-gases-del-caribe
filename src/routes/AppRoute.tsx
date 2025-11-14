@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import PublicRoute from "../guard/PublicRoute"
-import { Dashboard } from "../page/Dashboard"
+import { Profile } from "../page/Dashboard"
 import { LoginPage } from "../page/LoginPage"
 import PrivateRouter from "../guard/PrivateRoute"
 import { RegisterPage } from "../page/RegisterPage"
@@ -25,7 +25,7 @@ export const AppRoute = () => {
 
         <Route path="/profile" element={
           <PrivateRouter>
-          {<Dashboard />}
+          {<Profile />}
         </PrivateRouter>}
         />
 

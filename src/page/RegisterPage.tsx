@@ -92,7 +92,7 @@ export const RegisterPage = () => {
       });
 
       setSuccess(true);
-      login(response.data.user);
+      login(response.data.user, response.data.token);
 
       setTimeout(() => {
         navigate('/profile');

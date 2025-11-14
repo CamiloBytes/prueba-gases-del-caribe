@@ -1,10 +1,23 @@
-import { DataTypes, ModelDefined } from 'sequelize'
-import { sequelize } from '../database/config.database'
-import { IUser } from '../interface/IUser'
-import { DocumentTypeModel } from './DocumentTypeModel'
+import { DataTypes, Model } from 'sequelize'
+import { sequelize } from '../database/config.database.ts'
+import { DocumentTypeModel } from './DocumentTypeModel.ts'
 import bcrypt from 'bcrypt'
 
-export const UserModel: ModelDefined<IUser, Omit<IUser, "id">> = sequelize.define("user", {
+interface IUser {
+    id?: number
+    first_name: string,
+    last_name: string,
+    email: string,
+    password: string,
+    birth_date?: Date,
+    document_number?: string
+    document_types_id?: number,
+    phone: string,
+    address?: string,
+    create_at?: Date
+}
+
+export const UserModel = sequelize.define("user", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -73,18 +86,4 @@ DocumentTypeModel.hasMany(UserModel,{
     as:"users"
 })
 
-// Hook para hash de contraseña antes de crear
-UserModel.beforeCreate(async (user) => {
-    if (user.password) {
-        const saltRounds = 10;
-        user.password = await bcrypt.hash(user.password, saltRounds);
-    }
-});
-
-// Hook para hash de contraseña antes de actualizar
-UserModel.beforeUpdate(async (user) => {
-    if (user.changed('password') && user.password) {
-        const saltRounds = 10;
-        user.password = await bcrypt.hash(user.password, saltRounds);
-    }
-});
+// No hashing for simplicity

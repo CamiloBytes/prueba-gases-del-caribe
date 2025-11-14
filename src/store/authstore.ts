@@ -3,20 +3,11 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import axios from 'axios';
 import type { AuthStore, User } from '../types/user.type';
 
-
-// Axios interceptor to add username header for authenticated requests
-axios.interceptors.request.use((config) => {
-    const user = JSON.parse(localStorage.getItem('auth-storage') || '{}')?.state?.user;
-    if (user?.first_name ) {
-        config.headers['x-user-name'] = user.first_name ;
-    }
-    return config;
-});
-
 export const useAuthStore = create<AuthStore>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             user: null,
+            token: null,
             isAuthenticated: false,
             isLoading: false,
 
@@ -27,7 +18,7 @@ export const useAuthStore = create<AuthStore>()(
             register: async (userData: User) => {
                 try {
                     set({ isLoading: true });
-                    const registerResponse = await axios.post("/api/users", userData);
+                    const registerResponse = await axios.post("http://localhost:4000/api/users", userData);
                     const user = registerResponse.data.user;
                     set({
                         user,

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DocumentTypeModel } from "../models/DocumentTypeModel";
+import { DocumentTypeModel } from "../models/DocumentTypeModel.ts";
 
 export const getDocumentTypes = async (_req: Request, res: Response) => {
     try {

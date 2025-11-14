@@ -1,84 +1,61 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { useUsers } from "../hooks/useGetUser";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import AddIcon from '@mui/icons-material/Add';
-import { UserFormDialog } from "../components/UserDialog";
-import LogoutIcon from '@mui/icons-material/Logout';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import type { Iuser, User } from "../types/user.type";
+import Avatar from "@mui/material/Avatar";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import { useAuthStore } from "../store/authstore";
-import { useNavigate } from "react-router-dom";
+import { EditProfileDialog } from "../components/EditProfileDialog";
+import { useProfile } from "../hooks/useProfile";
 
 
-export const Dashboard = () => {
-  const { users, loading, error, addUser, update, deleted } = useUsers();
-  const { logout, user } = useAuthStore();
+export const Profile = () => {
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
+  const {
+    openDialog,
+    openSnackbar,
+    snackbarMessage,
+    snackbarSeverity,
+    control,
+    errors,
+    handleOpenDialog,
+    handleCloseDialog,
+    handleCloseSnackbar,
+    handleSubmit,
+    isLoading,
+  } = useProfile();
 
-  const [editingUser, setEditingUser] = useState<Iuser | null>(null);
-
-  const handleOpenDialog = (user?: Iuser) => {
-    if (user) {
-      setEditingUser(user);
-    } else {
-      setEditingUser(null);
-    }
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setEditingUser(null);
-  };
-
-  const handleSubmit = async (userData: User) => {
-    if (editingUser && editingUser.id) {
-      await update(userData as Iuser, editingUser.id);
-    } else {
-      await addUser(userData as Iuser);
-    }
-    handleCloseDialog();
-  };
-
-
-
-
+  const documentTypes = [
+    { id: 1, name: "CC" },
+    { id: 2, name: "TI" },
+    { id: 3, name: "Pasaporte" },
+    { id: 4, name: "Otro" },
+  ];
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
-  if (loading) {
+  if (!user) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#1f2937" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          backgroundColor: "#1f2937",
+        }}
+      >
         <Typography variant="h6" sx={{ color: "#9ca3af" }}>
-          Cargando usuarios...
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#1f2937" }}>
-        <Typography variant="h6" sx={{ color: "#ef4444" }}>
-          {error}
+          No hay usuario autenticado
         </Typography>
       </Box>
     );
@@ -86,30 +63,46 @@ export const Dashboard = () => {
 
   return (
     <Box sx={{ p: 4, backgroundColor: "#1f2937", minHeight: "100vh" }}>
+      {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-        <Stack>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: "#f3f4f6" }}>
-            Panel de Usuarios
-          </Typography>
-          {user && (
-            <Typography variant="body2" sx={{ color: "#9ca3af", mt: 0.5 }}>
-              Bienvenido, {user.first_name} {user.last_name}
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Avatar
+            sx={{
+              bgcolor: "#6b7280",
+              width: 56,
+              height: 56,
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            {user.first_name.charAt(0).toUpperCase()}
+          </Avatar>
+          <Stack>
+            <Typography variant="h4" fontWeight="bold" sx={{ color: "#f3f4f6" }}>
+              ¡Hola, {user.first_name}!
             </Typography>
-          )}
+            <Typography variant="body1" sx={{ color: "#9ca3af" }}>
+              {user.email}
+            </Typography>
+          </Stack>
         </Stack>
+
         <Stack direction="row" spacing={2}>
           <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => handleOpenDialog()}
+            variant="outlined"
+            onClick={handleOpenDialog}
             sx={{
-              backgroundColor: "#374151",
-              "&:hover": { backgroundColor: "#4b5563" },
+              borderColor: "#4b5563",
+              color: "#f3f4f6",
+              "&:hover": {
+                backgroundColor: "#374151",
+                borderColor: "#6b7280",
+              },
               textTransform: "none",
               fontWeight: "bold",
             }}
           >
-            Nuevo Usuario
+            Editar Perfil
           </Button>
           <Button
             variant="outlined"
@@ -118,9 +111,9 @@ export const Dashboard = () => {
             sx={{
               borderColor: "#4b5563",
               color: "#f3f4f6",
-              "&:hover": { 
+              "&:hover": {
                 backgroundColor: "#374151",
-                borderColor: "#6b7280"
+                borderColor: "#6b7280",
               },
               textTransform: "none",
               fontWeight: "bold",
@@ -133,97 +126,100 @@ export const Dashboard = () => {
 
       <Divider sx={{ mb: 3, backgroundColor: "#4b5563" }} />
 
-      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, backgroundColor: "#374151" }}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#1f2937" }}>
-            <TableRow>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }}>ID</TableCell>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }}>Nombre</TableCell>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }}>Correo</TableCell>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }}>Teléfono</TableCell>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }}>Tipo de Documento</TableCell>
-              <TableCell sx={{ color: "#f3f4f6", fontWeight: "bold" }} align="center">
-                Acciones
-              </TableCell>
-            </TableRow>
-          </TableHead>
+      {/* Información del Usuario en Tarjetas */}
+      <Stack spacing={3} maxWidth={900} mx="auto">
+        {/* Información Personal */}
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            backgroundColor: "#374151",
+            borderRadius: 2,
+            border: "1px solid #4b5563",
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" sx={{ color: "#f3f4f6", mb: 2 }}>
+            Información Personal
+          </Typography>
+          <Stack spacing={1}>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Nombre:</strong> {user.first_name} {user.last_name}
+            </Typography>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Email:</strong> {user.email}
+            </Typography>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Teléfono:</strong> {user.phone || "No especificado"}
+            </Typography>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Fecha de Nacimiento:</strong> {user.birth_date || "No especificada"}
+            </Typography>
+          </Stack>
+        </Paper>
 
-          <TableBody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  hover
-                  sx={{
-                    transition: "background-color 0.2s ease",
-                    "&:hover": { backgroundColor: "#4b5563" },
-                  }}
-                >
-                  <TableCell sx={{ color: "#e5e7eb" }}>{user.id}</TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Avatar sx={{ bgcolor: "#6b7280", width: 32, height: 32 }}>
-                        {user.first_name.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <Typography sx={{ color: "#e5e7eb" }}>
-                        {user.first_name} {user.last_name}
-                      </Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell sx={{ color: "#e5e7eb" }}>{user.email}</TableCell>
-                  <TableCell sx={{ color: "#e5e7eb" }}>{user.phone || "—"}</TableCell>
-                  <TableCell sx={{ color: "#e5e7eb" }}>
-                    {user.document_type
-                      ? `${user.document_type.abbreviation} - ${user.document_type.name}`
-                      : "No asignado"}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Stack direction="row" spacing={1} justifyContent="center">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenDialog(user)}
-                        sx={{
-                          color: "#9ca3af",
-                          "&:hover": { color: "#e5e7eb", backgroundColor: "#4b5563" },
-                        }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => user.id && window.confirm('¿Estás seguro de eliminar este usuario?') && deleted(user.id)}
-                        sx={{
-                          color: "#9ca3af",
-                          "&:hover": { color: "#ef4444", backgroundColor: "#4b5563" },
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                  <Typography sx={{ color: "#9ca3af", fontStyle: "italic" }}>
-                    No hay usuarios registrados
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        {/* Documento */}
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            backgroundColor: "#374151",
+            borderRadius: 2,
+            border: "1px solid #4b5563",
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" sx={{ color: "#f3f4f6", mb: 2 }}>
+            Documento
+          </Typography>
+          <Stack spacing={1}>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Tipo:</strong> {documentTypes.find(type => type.id === user.document_types_id)?.name || "No especificado"}
+            </Typography>
+            <Typography sx={{ color: "#e5e7eb" }}>
+              <strong>Número:</strong> {user.document_number || "No especificado"}
+            </Typography>
+          </Stack>
+        </Paper>
 
-      <UserFormDialog
+        {/* Dirección */}
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            backgroundColor: "#374151",
+            borderRadius: 2,
+            border: "1px solid #4b5563",
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" sx={{ color: "#f3f4f6", mb: 2 }}>
+            Dirección
+          </Typography>
+          <Typography sx={{ color: "#e5e7eb" }}>
+            {user.address || "No especificada"}
+          </Typography>
+        </Paper>
+      </Stack>
+
+      {/* Dialog de Edición */}
+      <EditProfileDialog
         open={openDialog}
-        onclose={handleCloseDialog}
-        onsubmit={handleSubmit}
-        editingUser={editingUser}
+        onClose={handleCloseDialog}
+        onSubmit={handleSubmit}
+        documentTypes={documentTypes}
+        control={control}
+        errors={errors}
+        isLoading={isLoading}
       />
 
-      
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
