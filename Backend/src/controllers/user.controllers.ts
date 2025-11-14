@@ -5,9 +5,7 @@ import bcrypt from 'bcrypt';
 
 export const createUser = async (req: express.Request, res: express.Response) => {
     try {
-        const { password, ...userData } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await UserModel.create({ ...userData, password: hashedPassword });
+        const user = await UserModel.create(req.body);
         res.status(201).json({ message: "Usuario creado con exito", user })
     } catch (error: any) {
         res.status(500).json({ message: "Error al crear al Usuario", error: error.message })
@@ -44,48 +42,51 @@ export const updateuser = async (req: express.Request, res: express.Response) =>
         const { id } = req.params;
         const updateData = req.body;
 
-        if (updateData.current_password) {
+        // Limpiar campos vacíos
+        if (updateData.birth_date === "") updateData.birth_date = null;
+        if (updateData.document_number === "") updateData.document_number = null;
+        if (updateData.address === "") updateData.address = null;
+
+        if (updateData.new_password && updateData.confirm_password) {
+            if (updateData.new_password !== updateData.confirm_password) {
+                return res.status(400).json({ message: "Las contraseñas nuevas no coinciden" });
+            }
+
+            // Verificar contraseña actual solo si se está cambiando la contraseña
+            if (!updateData.current_password) {
+                return res.status(400).json({ message: "Debes proporcionar la contraseña actual para cambiar la contraseña" });
+            }
+
             const user = await UserModel.findByPk(id);
             if (!user) {
                 return res.status(404).json({ message: "Usuario no encontrado" });
             }
 
             const storedPassword = user.get('password') as string;
-            console.log('Contraseña actual proporcionada:', updateData.current_password);
-            console.log('Contraseña almacenada (hash):', storedPassword);
-
             const isCurrentPasswordValid = await bcrypt.compare(updateData.current_password, storedPassword);
-            console.log('¿Contraseña válida?', isCurrentPasswordValid);
 
             if (!isCurrentPasswordValid) {
                 return res.status(401).json({ message: "Contraseña actual incorrecta" });
             }
 
-            delete updateData.current_password;
-        }
-
-        if (updateData.new_password && updateData.confirm_password) {
-            if (updateData.new_password !== updateData.confirm_password) {
-                return res.status(400).json({ message: "Las contraseñas nuevas no coinciden" });
-            }
             updateData.password = await bcrypt.hash(updateData.new_password, 10);
             delete updateData.new_password;
             delete updateData.confirm_password;
+            delete updateData.current_password;
+        } else if (updateData.new_password || updateData.confirm_password || updateData.current_password) {
+            return res.status(400).json({ message: "Debes proporcionar tanto la nueva contraseña como la confirmación y la actual" });
         }
 
+        console.log('updateData before update:', updateData); // Debug log
         const [updated] = await UserModel.update(updateData, { where: { id } });
-        if (updated) {
-            const updatedUser = await UserModel.findByPk(id, {
-                include: [{
-                    model: DocumentTypeModel,
-                    as: 'document_types'
-                }]
-            });
+        if (updated > 0) {
+            const updatedUser = await UserModel.findByPk(id);
             res.json({ message: "Usuario actualizado correctamente", user: updatedUser })
         } else {
             res.status(404).json({ message: "Usuario no encontrado" })
         }
     } catch (error: any) {
+        console.error('Update user error:', error); // Debug log
         res.status(500).json({ message: "Error al actualizar el Usuario", error: error.message })
     }
 }

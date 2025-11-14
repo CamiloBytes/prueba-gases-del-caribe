@@ -76,6 +76,12 @@ export const UserModel = sequelize.define("user", {
         timestamps: false
     })
 
+UserModel.beforeCreate(async (user: any) => {
+    if (user.password) {
+        user.password = await bcrypt.hash(user.password, 10);
+    }
+});
+
 UserModel.belongsTo(DocumentTypeModel, {
     foreignKey:"document_types_id",
     as: "document_types"
@@ -85,5 +91,3 @@ DocumentTypeModel.hasMany(UserModel,{
     foreignKey:"document_types_id",
     as:"users"
 })
-
-// No hashing for simplicity

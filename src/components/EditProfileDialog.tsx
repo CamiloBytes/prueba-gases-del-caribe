@@ -25,7 +25,7 @@ interface ProfileFormData {
   email: string;
   phone: string;
   birth_date: string;
-  document_type_id: number;
+  document_types_id: number;
   document_number: string;
   address: string;
   new_password: string;
@@ -190,7 +190,7 @@ export const EditProfileDialog = ({
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <Controller
-                name="document_type_id"
+                name="document_types_id"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -323,17 +323,22 @@ export const EditProfileDialog = ({
                 border: "1px solid #4b5563",
               }}
             >
-              Para actualizar tu información, debes ingresar tu contraseña actual
+              Para cambiar tu contraseña, debes ingresar tu contraseña actual
             </Alert>
 
             <Controller
               name="current_password"
               control={control}
-              rules={{ required: "La contraseña actual es requerida" }}
+              rules={{
+                validate: (value, formValues) =>
+                  (formValues.new_password || formValues.confirm_password) && !value
+                    ? "La contraseña actual es requerida para cambiar la contraseña"
+                    : true,
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Contraseña Actual *"
+                  label="Contraseña Actual"
                   type="password"
                   fullWidth
                   error={!!errors.current_password}

@@ -9,7 +9,7 @@ interface ProfileFormData {
   email: string;
   phone: string;
   birth_date: string;
-  document_type_id: number;
+  document_types_id: number;
   document_number: string;
   address: string;
   new_password: string;
@@ -30,6 +30,7 @@ export const useProfile = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<ProfileFormData>({
     defaultValues: {
       first_name: user?.first_name || "",
@@ -37,7 +38,7 @@ export const useProfile = () => {
       email: user?.email || "",
       phone: user?.phone || "",
       birth_date: user?.birth_date || "",
-      document_type_id: user?.document_types_id || 1,
+      document_types_id: user?.document_types_id || 1,
       document_number: user?.document_number || "",
       address: user?.address || "",
       new_password: "",
@@ -45,6 +46,8 @@ export const useProfile = () => {
       current_password: "",
     },
   });
+
+  const newPasswordValue = watch("new_password");
 
   const onSubmit = async (data: ProfileFormData) => {
     if (!user?.id) {
@@ -63,7 +66,7 @@ export const useProfile = () => {
         email: data.email,
         phone: data.phone,
         birth_date: data.birth_date,
-        document_type_id: data.document_type_id,
+        document_types_id: data.document_types_id,
         document_number: data.document_number,
         address: data.address,
         current_password: data.current_password,
@@ -75,7 +78,18 @@ export const useProfile = () => {
 
       if (response.data.user) {
         // Actualizar el store con los nuevos datos del usuario
-        login(response.data.user);
+        const updatedUser = {
+          id: response.data.user.id,
+          first_name: response.data.user.first_name,
+          last_name: response.data.user.last_name,
+          email: response.data.user.email,
+          phone: response.data.user.phone,
+          birth_date: response.data.user.birth_date,
+          document_types_id: response.data.user.document_types_id,
+          document_number: response.data.user.document_number,
+          address: response.data.user.address,
+        };
+        login(updatedUser);
       }
 
       setSnackbarMessage("Perfil actualizado correctamente");
